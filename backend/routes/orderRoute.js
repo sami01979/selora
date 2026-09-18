@@ -1,5 +1,5 @@
 import express from "express";
-import { placeOrder, allOrders, userOrders, updateStatus } from "../controllers/orderController.js";
+import { placeOrder, allOrders, userOrders, updateStatus, deleteOrder } from "../controllers/orderController.js";
 import adminAuth from "../middleware/adminAuth.js";
 import authUser from "../middleware/auth.js";
 
@@ -8,6 +8,7 @@ const orderRouter = express.Router();
 // admin
 orderRouter.post("/list", adminAuth, allOrders);
 orderRouter.post("/status", adminAuth, updateStatus);
+orderRouter.post("/delete", adminAuth, deleteOrder);
 
 // user
 orderRouter.post("/place", authUser, placeOrder);

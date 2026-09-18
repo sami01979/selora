@@ -1,12 +1,39 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
+import subscriptionModel from "../models/subscriptionModel.js";
+import webpush from "../utils/webpush.js";
 
 const DELIVERY_CHARGES = {
   inside: 80,
   outside: 120,
 };
 
-// place order - codonly
+const notifyAdmins = async (order) => {
+  try {
+    const subs = await subscriptionModel.find({});
+    const payload = JSON.stringify({
+      title: "New Order — Selora",
+      body: `${order.address?.name || "Customer"} · ৳${order.amount}`,
+      url: "/orders",
+    });
+
+    await Promise.all(
+      subs.map((sub) =>
+        webpush.sendNotification(sub, payload).catch(async (err) => {
+          if (err.statusCode === 410 || err.statusCode === 404) {
+            await subscriptionModel.deleteOne({ endpoint: sub.endpoint });
+          } else {
+            console.log("Push error:", err.message);
+          }
+        })
+      )
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// place order - cod only
 const placeOrder = async (req, res) => {
   try {
     const { userId, items, amount, address, deliveryZone } = req.body;
@@ -34,6 +61,8 @@ const placeOrder = async (req, res) => {
     await newOrder.save();
 
     await userModel.findByIdAndUpdate(userId, { cartData: {} });
+
+    notifyAdmins(newOrder);
 
     res.json({ success: true, message: "Order placed" });
   } catch (error) {

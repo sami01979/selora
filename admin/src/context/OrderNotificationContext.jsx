@@ -5,9 +5,7 @@ import { backendUrl } from "../App";
 
 const OrderNotificationContext = createContext();
 
-const notifySound = new Audio(
-  "https://actions.google.com/sounds/v1/alerts/notification_bell.ogg"
-);
+const notifySound = new Audio("/notification.wav");
 
 const SEEN_KEY = "admin_last_seen_order_date";
 

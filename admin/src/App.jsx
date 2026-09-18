@@ -11,6 +11,7 @@ import OrderDetails from "./pages/OrderDetails";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import { OrderNotificationProvider } from "./context/OrderNotificationContext";
+import { subscribeToPush } from "./utils/pushNotifications";
 
 export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -20,6 +21,12 @@ const App = () => {
 
   useEffect(() => {
     localStorage.setItem("token", token);
+  }, [token]);
+
+  useEffect(() => {
+    if (token) {
+      subscribeToPush(backendUrl, token);
+    }
   }, [token]);
 
   return (

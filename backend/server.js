@@ -7,8 +7,11 @@ import userRouter from "./routes/userRoute.js";
 import productRouter from "./routes/productRoute.js";
 import cartRouter from "./routes/cartRoute.js";
 import orderRouter from "./routes/orderRoute.js";
+import notificationRouter from "./routes/notificationRoute.js";
+
 
 const app = express();
+
 const port = process.env.PORT || 4000;
 
 console.log("JWT_SECRET:", process.env.JWT_SECRET);
@@ -16,6 +19,7 @@ console.log("JWT_SECRET:", process.env.JWT_SECRET);
 connectDB();
 connectCloudinary();
 
+app.use("/api/notification", notificationRouter);
 app.use(express.json());
 app.use(cors());
 
