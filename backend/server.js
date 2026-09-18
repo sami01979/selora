@@ -14,7 +14,7 @@ const app = express();
 
 const port = process.env.PORT || 4000;
 
-console.log("JWT_SECRET:", process.env.JWT_SECRET);
+
 
 connectDB();
 connectCloudinary();
