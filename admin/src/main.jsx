@@ -10,6 +10,7 @@ initNotifications();
 // TEMPORARY test helper: run testNotify() in the console, then delete this line
 window.testNotify = () => notifyNewOrder({ address: { name: "Test" }, amount: 100 });
 
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
