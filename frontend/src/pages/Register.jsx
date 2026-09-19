@@ -51,14 +51,14 @@ export default function Register() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            minLength={8}
+            minLength={3}
             className="w-full px-3 py-2 rounded-lg border border-lavender focus:outline-none"
           />
         </div>
         {error && <p className="text-rose text-sm">{error}</p>}
         <button
           type="submit"
-          className="bg-lavender text-white rounded-lg py-2.5 mt-2"
+          className="bg-plum active:bg-purple-800 active:scale-95 text-white rounded-lg py-2.5 mt-2"
         >
           Register
         </button>

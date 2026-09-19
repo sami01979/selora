@@ -30,7 +30,7 @@ export default function ProductDetails() {
     <div className="max-w-5xl mx-auto p-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="flex flex-col gap-3">
-          <div className="h-96 lg:h-[500px] w-full overflow-hidden rounded-lg border border-lavender">
+          <div className="h-[500px] lg:h-[500px] w-full overflow-hidden rounded-lg border border-lavender">
             <img
               className="w-full h-full object-cover"
               src={images[selectedImage]}
@@ -60,19 +60,19 @@ export default function ProductDetails() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <h1 className="text-2xl font-semibold">{product.name}</h1>
+          <h1 className="text-2xl text-plum font-semibold">{product.name}</h1>
           <div className="flex items-center gap-3">
             <p className="text-xl font-semibold text-plum">
               Price: {hasOffer ? product.offerPrice : product.price}
             </p>
             {hasOffer && (
-              <span className="text-gray-400 line-through text-lg">{product.price}</span>
+              <span className="text-red-600 line-through text-lg">{product.price}</span>
             )}
           </div>
-          <p className="text-gray-600">{product.description}</p>
+          <p className="text-gray-700">{product.description}</p>
           <button
             onClick={() => addToCart(product)}
-            className="bg-blue-500 text-white rounded-lg py-3 px-6 w-fit active:bg-blue-900 hover:bg-blue-700 active:scale-95"
+            className="bg-plum  text-white rounded-lg py-3 px-6 w-fit active:bg-purple-800 hover:bg-purple-900 active:scale-95"
           >
             Add to Cart
           </button>

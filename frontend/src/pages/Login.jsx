@@ -47,7 +47,7 @@ export default function Login() {
         {error && <p className="text-rose text-sm">{error}</p>}
         <button
           type="submit"
-          className="bg-blue-500 hover:bg-blue-700 active:bg-blue-900 active:scale-95 text-white rounded-lg py-2.5 mt-2"
+          className="bg-plum  active:bg-purple-800 active:scale-95 text-white rounded-lg py-2.5 mt-2"
         >
           Log In
         </button>

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "./components/Navbar";
+import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import ProductDetails from "./pages/ProductDetails";
 import CategoryPage from "./pages/CategoryPage";
@@ -16,7 +17,16 @@ import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
   return (
     <BrowserRouter>
-      <ToastContainer position="top-center" autoClose={2000} />
+      <ScrollToTop />
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        draggable
+        draggableDirection="x"
+        draggablePercent={30}
+        closeOnClick
+        pauseOnHover
+      />
       <Navbar />
 
       <Routes>

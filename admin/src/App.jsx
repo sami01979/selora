@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -17,10 +17,15 @@ export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     localStorage.setItem("token", token);
+  }, [token]);
+
+  // open the sidebar every time the admin logs in
+  useEffect(() => {
+    if (token) setSidebarOpen(true);
   }, [token]);
 
   useEffect(() => {
@@ -54,6 +59,7 @@ const App = () => {
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
             <div className="w-full md:w-[80%] mx-auto px-4 sm:px-6 pt-6 pb-12">
               <Routes>
+                <Route path="/" element={<Navigate to="/orders" replace />} />
                 <Route path="/add" element={<Add token={token} />} />
                 <Route path="/list" element={<List token={token} />} />
                 <Route path="/orders" element={<Orders token={token} />} />

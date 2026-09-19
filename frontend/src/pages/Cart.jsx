@@ -15,7 +15,7 @@ export default function Cart() {
       <div className="max-w-3xl mx-auto p-8 text-center">
         <h1 className="font-display text-3xl text-plum mb-3">Your Cart</h1>
         <p className="text-gray-500 mb-6">Your cart is empty.</p>
-        <Link to="/" className="inline-block bg-lavender text-white rounded-lg py-2.5 px-6">
+        <Link to="/" className="inline-block bg-plum active:scale-95 active:bg-purple-800 text-white rounded-lg py-2.5 px-6">
           Continue Shopping
         </Link>
       </div>
@@ -78,7 +78,7 @@ export default function Cart() {
         <p className="text-xs text-gray-400">Delivery charge added at checkout</p>
         <Link
           to="/checkout"
-          className="bg-blue-500 hover:bg-blue-700 active:bg-blue-900 active:scale-95 text-white rounded-lg py-3 px-8 w-fit"
+          className="bg-plum hover:bg-purple-900 active:bg-purple-800 active:scale-95 text-white rounded-lg py-3 px-8 w-fit"
         >
           Proceed to Checkout
         </Link>

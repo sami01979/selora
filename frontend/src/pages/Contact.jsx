@@ -1,93 +1,58 @@
-import { useState } from "react";
 import { FaFacebook, FaWhatsapp, FaPhone, FaEnvelope } from "react-icons/fa";
 
+const CONTACTS = [
+  {
+    label: "Call Us",
+    value: "+880 1540-407044",
+    href: "tel:+8801540407044",
+    icon: FaPhone,
+    external: false,
+  },
+  {
+    label: "WhatsApp",
+    value: "+880 1540-407044",
+    href: "https://wa.me/8801540407044",
+    icon: FaWhatsapp,
+    external: true,
+  },
+  {
+    label: "Email",
+    value: "selora363@gmail.com",
+    href: "mailto:selora363@gmail.com",
+    icon: FaEnvelope,
+    external: false,
+  },
+  {
+    label: "Facebook",
+    value: "Selora on Facebook",
+    href: "https://www.facebook.com/share/14u9reP9njJ/",
+    icon: FaFacebook,
+    external: true,
+  },
+];
+
 export default function Contact() {
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Contact form submitted:", form);
-    setSubmitted(true);
-    setForm({ name: "", email: "", message: "" });
-  };
-
   return (
-    <div className="max-w-4xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-10">
-      {/* Contact info */}
-      <div>
-        <h1 className="font-display text-3xl text-plum mb-2">Get in Touch</h1>
-        <p className="text-gray-600 mb-6">
+    <div className="max-w-3xl mx-auto px-4 py-10 sm:py-14">
+      <div className="text-center mb-10">
+        <h1 className="font-display text-3xl sm:text-4xl text-plum mb-3">Get in Touch</h1>
+        <p className="text-gray-600 max-w-md mx-auto">
           Have a question about an order or a product? Reach us directly.
         </p>
-
-        <div className="flex flex-col gap-4">
-          <a href="tel:+8801XXXXXXXXX" className="flex items-center gap-3 text-gray-700 hover:text-plum">
-            <FaPhone className="text-lavender text-xl" />
-            +880 1XXX-XXXXXX
-          </a>
-          <a href="mailto:hello@selora.com" className="flex items-center gap-3 text-gray-700 hover:text-plum">
-            <FaEnvelope className="text-lavender text-xl" />
-            hello@selora.com
-          </a>
-          <a href="https://facebook.com/yourpage" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-plum">
-            <FaFacebook className="text-lavender text-xl" />
-            facebook.com/selora
-          </a>
-          <a href="https://wa.me/8801XXXXXXXXX" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-gray-700 hover:text-plum">
-            <FaWhatsapp className="text-lavender text-xl" />
-            +880 1XXX-XXXXXX
-          </a>
-        </div>
       </div>
 
-      {/* Contact form */}
-      <div>
-        {submitted && (
-          <div className="bg-green-100 text-green-700 rounded-lg p-3 mb-4">
-            Thanks! We'll get back to you soon.
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            type="text"
-            name="name"
-            placeholder="Your name"
-            value={form.name}
-            onChange={handleChange}
-            required
-            className="border border-lavender rounded-lg p-3"
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Your email"
-            value={form.email}
-            onChange={handleChange}
-            required
-            className="border border-lavender rounded-lg p-3"
-          />
-          <textarea
-            name="message"
-            placeholder="Your message"
-            value={form.message}
-            onChange={handleChange}
-            required
-            rows={5}
-            className="border border-lavender rounded-lg p-3"
-          />
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 active:bg-blue-900 active:scale-95 text-white rounded-lg py-3 px-6 w-fit"
-          >
-            Send Message
-          </button>
-        </form>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {CONTACTS.map(({ label, value, href, icon: Icon, external }) => (
+          <a key={label} href={href} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined} className="flex items-center gap-4 border border-lavender rounded-lg p-4 hover:border-plum hover:shadow-md active:scale-95 transition">
+            <span className="flex items-center justify-center h-12 w-12 rounded-full bg-lavender/20 text-plum text-2xl shrink-0">
+              <Icon />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-xs uppercase tracking-wide text-gray-500">{label}</span>
+              <span className="block text-plum font-medium break-words">{value}</span>
+            </span>
+          </a>
+        ))}
       </div>
     </div>
   );

@@ -14,15 +14,15 @@ export default function ProductCard({ product }) {
           />
         </div>
         {product?.brand && (
-          <p className="text-xs text-gray-400 uppercase tracking-wide mt-2">{product.brand}</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide mt-2">{product.brand}</p>
         )}
-        <h1>{product?.name}</h1>
-        <div className="flex items-center gap-2">
-          <h2 className="text-plum font-semibold">
-            Price: {hasOffer ? product.offerPrice : product?.price}
+        <h1 className="uppercase text-plum">{product?.name}</h1>
+        <div className="flex items-center font-mono gap-2">
+          <h2 className="text-plum text-lg  font-semibold">
+            Price:{hasOffer ? product.offerPrice : product?.price}
           </h2>
           {hasOffer && (
-            <span className="text-gray-400 line-through text-sm">{product.price}</span>
+            <span className="text-red-600 line-through  text-md">{product.price}</span>
           )}
         </div>
       </div>

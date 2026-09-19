@@ -10,6 +10,8 @@ const DELIVERY_CHARGES = {
   outside: 120,
 };
 
+const PHONE_REGEX = /^01\d{9}$/; // starts with 01, total 11 digits
+
 export default function Checkout() {
   const items = useCart();
   const { clearCart } = useCartActions();
@@ -18,6 +20,7 @@ export default function Checkout() {
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const [area, setArea] = useState("");
   const [building, setBuilding] = useState("");
   const [city, setCity] = useState("");
@@ -32,9 +35,28 @@ export default function Checkout() {
   const deliveryCharge = DELIVERY_CHARGES[deliveryZone];
   const grandTotal = subtotal + deliveryCharge;
 
+  const handlePhoneChange = (e) => {
+    // keep digits only, max 11
+    const value = e.target.value.replace(/\D/g, "").slice(0, 11);
+    setPhone(value);
+    if (phoneError) setPhoneError("");
+  };
+
+  const validatePhone = () => {
+    if (!PHONE_REGEX.test(phone)) {
+      setPhoneError("Phone number must be 11 digits and start with 01");
+      return false;
+    }
+    setPhoneError("");
+    return true;
+  };
+
   const placeOrder = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (!validatePhone()) return;
+
     setPlacing(true);
     try {
       const orderItems = items.map((item) => ({
@@ -137,11 +159,20 @@ export default function Checkout() {
         <div>
           <label className="block text-sm font-medium mb-1">Phone</label>
           <input
+            type="tel"
+            inputMode="numeric"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={handlePhoneChange}
+            onBlur={() => phone && validatePhone()}
             required
-            className="w-full px-3 py-2 rounded-lg border border-lavender focus:outline-none"
+            maxLength={11}
+            minLength={11}
+            placeholder="01XXXXXXXXX"
+            className={`w-full px-3 py-2 rounded-lg border focus:outline-none ${
+              phoneError ? "border-rose" : "border-lavender"
+            }`}
           />
+          {phoneError && <p className="text-rose text-xs mt-1">{phoneError}</p>}
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Area Name</label>
@@ -178,7 +209,7 @@ export default function Checkout() {
         <button
           type="submit"
           disabled={placing}
-          className="bg-lavender text-white rounded-lg py-3 mt-2 disabled:opacity-60"
+          className="bg-plum  active:scale-95 active:bg-purple-800 text-white rounded-lg py-3 mt-2 disabled:opacity-60"
         >
           {placing ? "Placing Order..." : `Place Order — ৳${grandTotal}`}
         </button>
