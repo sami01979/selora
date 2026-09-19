@@ -24,9 +24,22 @@ const App = () => {
   }, [token]);
 
   useEffect(() => {
-    if (token) {
+    if (!token) return;
+
+    subscribeToPush(backendUrl, token);
+
+    // mobile Chrome needs the permission request to come from a tap
+    const onTap = () => {
       subscribeToPush(backendUrl, token);
-    }
+      window.removeEventListener("click", onTap);
+      window.removeEventListener("touchend", onTap);
+    };
+    window.addEventListener("click", onTap);
+    window.addEventListener("touchend", onTap);
+    return () => {
+      window.removeEventListener("click", onTap);
+      window.removeEventListener("touchend", onTap);
+    };
   }, [token]);
 
   return (

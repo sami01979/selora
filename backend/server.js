@@ -9,17 +9,13 @@ import cartRouter from "./routes/cartRoute.js";
 import orderRouter from "./routes/orderRoute.js";
 import notificationRouter from "./routes/notificationRoute.js";
 
-
 const app = express();
 
 const port = process.env.PORT || 4000;
 
-
-
 connectDB();
 connectCloudinary();
 
-app.use("/api/notification", notificationRouter);
 app.use(express.json());
 app.use(cors());
 
@@ -27,6 +23,7 @@ app.use("/api/user", userRouter);
 app.use("/api/product", productRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/order", orderRouter);
+app.use("/api/notification", notificationRouter);
 
 app.get("/", (req, res) => {
   res.send("Selora API is running");

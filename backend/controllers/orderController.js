@@ -1,36 +1,10 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
-import subscriptionModel from "../models/subscriptionModel.js";
-import webpush from "../utils/webpush.js";
+import { sendPushToAdmins } from "../utils/sendPush.js";
 
 const DELIVERY_CHARGES = {
   inside: 80,
   outside: 120,
-};
-
-const notifyAdmins = async (order) => {
-  try {
-    const subs = await subscriptionModel.find({});
-    const payload = JSON.stringify({
-      title: "New Order — Selora",
-      body: `${order.address?.name || "Customer"} · ৳${order.amount}`,
-      url: "/orders",
-    });
-
-    await Promise.all(
-      subs.map((sub) =>
-        webpush.sendNotification(sub, payload).catch(async (err) => {
-          if (err.statusCode === 410 || err.statusCode === 404) {
-            await subscriptionModel.deleteOne({ endpoint: sub.endpoint });
-          } else {
-            console.log("Push error:", err.message);
-          }
-        })
-      )
-    );
-  } catch (error) {
-    console.log(error);
-  }
 };
 
 // place order - cod only
@@ -62,7 +36,12 @@ const placeOrder = async (req, res) => {
 
     await userModel.findByIdAndUpdate(userId, { cartData: {} });
 
-    notifyAdmins(newOrder);
+    // awaited so serverless hosting doesn't freeze before the push is sent
+    await sendPushToAdmins({
+      title: "New Order — Selora",
+      body: `${address?.name || "Customer"} · ৳${finalAmount}`,
+      url: "/orders",
+    });
 
     res.json({ success: true, message: "Order placed" });
   } catch (error) {

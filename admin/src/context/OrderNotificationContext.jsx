@@ -1,69 +1,81 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
-import { backendUrl } from "../App";
+import { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
+import { useLocation } from "react-router-dom";
+import { notifyNewOrder } from "../utils/notify";
 
-const OrderNotificationContext = createContext();
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+const POLL_MS = 15000;
 
-const notifySound = new Audio("/notification.wav");
+const OrderNotificationContext = createContext({
+  orders: [],
+  loading: true,
+  unseenCount: 0,
+  markAllSeen: () => {},
+  refetch: () => {},
+});
 
-const SEEN_KEY = "admin_last_seen_order_date";
+export const useOrderNotification = () => useContext(OrderNotificationContext);
+// alias, because Sidebar and Orders import the plural name
+export const useOrderNotifications = useOrderNotification;
 
-export function OrderNotificationProvider({ token, children }) {
+export const OrderNotificationProvider = ({ token, children }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [lastSeenDate, setLastSeenDate] = useState(
-    Number(localStorage.getItem(SEEN_KEY)) || 0
-  );
-  const knownOrderIds = useRef(new Set());
-  const firstLoad = useRef(true);
+  const [unseenCount, setUnseenCount] = useState(0);
 
-  const fetchOrders = async () => {
+  const knownIds = useRef(null); // null until the first fetch sets the baseline
+  const onOrdersPage = useRef(false);
+  const location = useLocation();
+
+  const markAllSeen = useCallback(() => setUnseenCount(0), []);
+
+  useEffect(() => {
+    onOrdersPage.current = location.pathname.startsWith("/orders");
+    if (onOrdersPage.current) setUnseenCount(0);
+  }, [location.pathname]);
+
+  const fetchOrders = useCallback(async () => {
     if (!token) return;
     try {
-      const response = await axios.post(
-        backendUrl + "/api/order/list",
-        {},
-        { headers: { token } }
-      );
-      if (response.data.success) {
-        const fetched = response.data.orders.slice().sort((a, b) => b.date - a.date);
+      const res = await fetch(backendUrl + "/api/order/list", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", token },
+        body: "{}",
+      });
+      const data = await res.json();
 
-        if (!firstLoad.current) {
-          const newOnes = fetched.filter((o) => !knownOrderIds.current.has(o._id));
-          if (newOnes.length > 0) {
-            newOnes.forEach((o) => {
-              toast.info(`New order from ${o.address?.phone || "customer"} — ৳${o.amount}`);
-            });
-            notifySound.play().catch(() => {});
-          }
-        }
-
-        knownOrderIds.current = new Set(fetched.map((o) => o._id));
-        setOrders(fetched);
-        firstLoad.current = false;
+      if (!data.success) {
+        console.warn("Order poll rejected:", data.message);
+        return;
       }
-    } catch (error) {
-      console.log(error);
+
+      const list = (data.orders || []).slice().sort((a, b) => b.date - a.date);
+      setOrders(list);
+
+      // first fetch: remember existing orders, don't notify for them
+      if (knownIds.current === null) {
+        knownIds.current = new Set(list.map((o) => o._id));
+        return;
+      }
+
+      const fresh = list.filter((o) => !knownIds.current.has(o._id));
+      if (fresh.length === 0) return;
+
+      fresh.forEach((o) => knownIds.current.add(o._id));
+      notifyNewOrder(fresh[0]);
+      if (!onOrdersPage.current) setUnseenCount((c) => c + fresh.length);
+    } catch (err) {
+      console.error("Order poll failed:", err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     if (!token) return;
     fetchOrders();
-    const interval = setInterval(fetchOrders, 15000);
-    return () => clearInterval(interval);
-  }, [token]);
-
-  const markAllSeen = () => {
-    const latest = orders.length ? orders[0].date : Date.now();
-    setLastSeenDate(latest);
-    localStorage.setItem(SEEN_KEY, String(latest));
-  };
-
-  const unseenCount = orders.filter((o) => o.date > lastSeenDate).length;
+    const id = setInterval(fetchOrders, POLL_MS);
+    return () => clearInterval(id);
+  }, [token, fetchOrders]);
 
   return (
     <OrderNotificationContext.Provider
@@ -72,6 +84,4 @@ export function OrderNotificationProvider({ token, children }) {
       {children}
     </OrderNotificationContext.Provider>
   );
-}
-
-export const useOrderNotifications = () => useContext(OrderNotificationContext);
+};
