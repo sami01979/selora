@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import compression from "compression";
 import "dotenv/config";
 import connectDB from "./config/db.js";
 import connectCloudinary from "./config/cloudinary.js";
@@ -16,6 +17,7 @@ const port = process.env.PORT || 4000;
 connectDB();
 connectCloudinary();
 
+app.use(compression());
 app.use(express.json());
 app.use(cors());
 
@@ -28,5 +30,7 @@ app.use("/api/notification", notificationRouter);
 app.get("/", (req, res) => {
   res.send("Selora API is running");
 });
+
+app.get("/health", (req, res) => res.status(200).send("ok"));
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
