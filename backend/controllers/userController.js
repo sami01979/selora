@@ -20,7 +20,7 @@ const registerUser = async (req, res) => {
       return res.json({ success: false, message: "Please enter a valid email" });
     }
     if (password.length <=3) {
-      return res.json({ success: false, message: "Please enter a strong password (min 8 chars)" });
+      return res.json({ success: false, message: "Please enter a strong password (min 4 chars)" });
     }
 
     const salt = await bcrypt.genSalt(10);

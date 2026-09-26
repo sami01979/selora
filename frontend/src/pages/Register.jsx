@@ -45,7 +45,7 @@ export default function Register() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Password</label>
+          <label className="block text-sm font-medium mb-1"> Set a password</label>
           <input
             type="password"
             value={password}
